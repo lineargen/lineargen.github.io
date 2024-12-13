@@ -1,6 +1,6 @@
 # LinGen
 
-This is the repository that contains source code for the [LinGen website](https://lingen.github.io).
+This is the repository that contains source code for the [LinGen website](https://lineargen.github.io).
 
 If you find LinGen useful for your work please cite:
 ```
