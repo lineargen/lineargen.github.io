@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="We propose a Linear-complexity text-to-Video Generation (LinGen) framework that scales linearly in the number of pixels. For the first time, LinGen enables high-resolution minute-length video generation on a single GPU without compromising quality.">
+  <meta name="keywords" content="LinGen, Generative Model, Text-to-Video Generation, Diffusion Model, Minute-Length Video Generation, State Space Model, Mamba">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="og:title" content="LinGen: Towards High-Resolution Minute-Length Text-to-Video Generation with Linear Computational Complexity">
+  <meta property="og:description"
+        content="We propose a Linear-complexity text-to-Video Generation (LinGen) framework that scales linearly in the number of pixels. For the first time, LinGen enables high-resolution minute-length video generation on a single GPU without compromising quality.">
+  <title>LinGen: Towards High-Resolution Minute-Length Text-to-Video Generation with Linear Computational Complexity</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="./static/js/google.js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+  <script type="text/javascript" async
+  src="./static/js/tex-mml-chtml.js">
+  </script>
+
+  <link href="./static/css/fonts.css"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="./static/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <!-- <link rel="icon" href="./static/images/adobe.svg"> -->
+
+  <script src="./static/js/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">LinGen: Towards High-Resolution Minute-Length Text-to-Video Generation with Linear Computational Complexity</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://hongjiew.github.io/">Hongjie Wang</a><sup>1,2*</sup>,</span>
+            <span class="author-block">
+              <a href="https://chihyaoma.github.io/">Chih-Yao Ma</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://ycliu93.github.io/">Yen-Cheng Liu</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://sekunde.github.io/">Ji Hou</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://sites.google.com/view/taoxu">Tao Xu</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://sites.google.com/view/jialiangwang/home">Jialiang Wang</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://xujuefei.com/">Felix Juefei-Xu</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=be4sU3cAAAAJ&hl=en">Yaqiao Luo</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=eqQQkM4AAAAJ&hl=en">Peizhao Zhang</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=u-UDZcsAAAAJ&hl=en">Tingbo Hou</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/p%C3%A9ter-vajda-9a03aaa/">Peter Vajda</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.princeton.edu/~jha/">Niraj K. Jha</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://sites.google.com/view/xiaoliangdai/">Xiaoliang Dai</a><sup>2</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Princeton University,</span>
+            <span class="author-block"><sup>2</sup>Meta</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>*</sup>This work was partly done during an internship at Meta</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="./static/LinGen_ArXiv.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- <span class="link-block">
+                <a href="https://arxiv.org/abs/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>Slides</span>
+                </a>
+              </span> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Demo Videos</h2>
+
+    <!-- Block 2: Second 2x3 Videos -->
+    <div class="block">
+      <h2 class="title is-4 has-text-centered">Minute-Length Videos</h2>
+      <div class="columns is-multiline is-centered">
+        <!-- Repeat videos for the second block -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/68s_videos/example1.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <!-- Add additional videos similarly -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/68s_videos/example2.mp4" type="video/mp4">
+              <track src="./static/subtitles/test7.vtt" kind="subtitles" srclang="en" label="English">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/68s_videos/example3.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/68s_videos/example4.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/68s_videos/example5.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/68s_videos/example6.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/68s_videos/example7.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/68s_videos/example8.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 1: First 2x3 Videos -->
+    <div class="block">
+      <h2 class="title is-4 has-text-centered">17-second Videos</h2>
+      <div class="columns is-multiline is-centered">
+        <!-- Video 1 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/17s_videos/example1.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <!-- Video 2 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/17s_videos/example2.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <!-- Video 3 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/17s_videos/example3.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <!-- Video 4 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/17s_videos/example4.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <!-- Video 5 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/17s_videos/example5.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <!-- Video 6 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/17s_videos/example6.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/17s_videos/example7.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/17s_videos/example8.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Text-to-video generation enhances content creation but is highly computationally intensive: The computational
+            cost of Diffusion Transformers (DiTs) scales quadratically in the number of pixels. This makes minute-length
+            video generation extremely expensive, limiting most existing models to generating videos of only 10-20 seconds
+            length.
+          </p>
+          <p>
+            We propose a <b>Lin</b>ear-complexity text-to-video <b>Gen</b>eration (<b>LinGen</b>) framework whose cost scales
+            linearly in the number of pixels. For the first time, <b>LinGen enables high-resolution minute-length video generation on
+              a single GPU without compromising quality.</b> It replaces the computationally-dominant and quadratic-complexity
+            block, self-attention, with a linear-complexity block called <b>MATE</b>, which consists of an <b>MA</b>-branch
+            and a <b>TE</b>-branch (check details below).
+          </p>
+          <p>
+            Experimental results show that LinGen outperforms DiT (with a 75.6% win rate)
+            in video quality with up to 15\(\times\) (11.5\(\times\)) FLOPs (latency) reduction. Furthermore, both automatic
+            metrics and human evaluation demonstrate our LinGen-4B yields comparable video quality to state-of-the-art models
+            (with a 50.5%, 52.1%, 49.1% win rate with respect to Gen-3, LumaLabs, and Kling, respectively). This paves the way
+            to hour-length movie generation and real-time interactive video generation.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Framework Overview</h2>
+        <img src="./static/images/overview.png"
+             alt="Framework overview."
+             class="framework-image">
+             <div class="content has-text-justified">
+              <p>
+                <b>LinGen</b> replaces self-attention layers with a <b>MATE</b> block, which inherits
+                linear complexity from its two branches: <b>MA</b>-branch and <b>TE</b>-branch.
+                The <b>MA-branch</b> targets short-to-long-range correlations, combining a
+                bidirectional Mamba2 block with our token rearrangement method, Rotary Major Scan,
+                and our review tokens developed for long video generation. The <b>TE-branch</b>
+                introduces a novel Temporal Swin Attention block designed to capture correlations between
+                spatially adjacent tokens and temporally medium-range tokens. The MATE block addresses the adjacency
+                preservation issue of Mamba and improves the consistency of generated videos significantly.
+              </p>
+            </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Exceptional Efficiency with Linear Compuatational Complexity</h2>
+        <img src="./static/images/efficiency.png"
+             alt="Framework overview."
+             class="framework-image">
+             <div class="content has-text-justified">
+
+            </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Comparisons with Existing Works</h2>
+    <!-- Block 1: First 2x3 Videos -->
+    <div class="block">
+      <h2 class="title is-4 has-text-centered">State-of-the-Art Commercial Models</h2>
+      <h2 class="title is-5 has-text-centered">Prompt: A fish swimming into a coffee shop and trying to order.</h2>
+      <div class="columns is-multiline is-centered">
+        <!-- Video 1 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/sota_commerical/Luma-1.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LumaLabs</p>
+        </div>
+        <!-- Video 2 -->
+        <div class="column is-half">
+          <div class="video-container smaller-video">
+            <video controls autoplay muted>
+              <source src="./static/videos/sota_commerical/Gen3-1.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">Runway Gen3</p>
+        </div>
+        <!-- Video 3 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/sota_commerical/Kling-1.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">Kling 1.5</p>
+        </div>
+        <!-- Video 4 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/sota_commerical/LinGen-1.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen (Ours)</p>
+        </div>
+      </div>
+      <h2 class="title is-5 has-text-centered">Prompt: Camera zoom in. A chef chopping vegetables with speed.</h2>
+      <div class="columns is-multiline is-centered">
+        <!-- Video 1 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/sota_commerical/Luma-2.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LumaLabs</p>
+        </div>
+        <!-- Video 2 -->
+        <div class="column is-half">
+          <div class="video-container smaller-video">
+            <video controls autoplay muted>
+              <source src="./static/videos/sota_commerical/Gen3-2.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">Runway Gen3</p>
+        </div>
+        <!-- Video 3 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/sota_commerical/Kling-2.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">Kling 1.5</p>
+        </div>
+        <!-- Video 4 -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/sota_commerical/LinGen-2.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen (Ours)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Block 2: Second 2x3 Videos -->
+    <div class="block">
+      <h2 class="title is-4 has-text-centered">Typical Open-Source Models</h2>
+      <h2 class="title is-5 has-text-centered">Prompt: A dog wearing VR goggles on a boat.</h2>
+      <div class="columns is-multiline is-centered">
+        <!-- Repeat videos for the second block -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/T2V-Turbo/T2V-Turbo.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">T2V-Turbo</p>
+        </div>
+        <!-- Add additional videos similarly -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/T2V-Turbo/LinGen.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen (Ours)</p>
+        </div>
+      </div>
+      <h2 class="title is-5 has-text-centered">Prompt: Elderly artist painting by the sea.</h2>
+      <div class="columns is-multiline is-centered">
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/CogVideoX/CogVideoX.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">CogVideoX-5B</p>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/CogVideoX/LinGen.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen (Ours)</p>
+        </div>
+      </div>
+      <h2 class="title is-5 has-text-centered">Prompt: Noir street: neon, shadows, solitary walker.</h2>
+      <div class="columns is-multiline is-centered">
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/OpenSora/OpenSora.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">OpenSora V1.2</p>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/OpenSora/LinGen.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen (Ours)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2 class="title is-4 has-text-centered">Minute-Length Trials</h2>
+      <h2 class="title is-5 has-text-centered">Prompt: Aerial view of Santorini during the blue hour.</h2>
+      <div class="columns is-multiline is-centered">
+        <!-- Repeat videos for the second block -->
+        <div class="column is-half">
+          <div class="video-container square-video">
+            <video controls autoplay muted>
+              <source src="./static/videos/Loong/Loong.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">Loong</p>
+        </div>
+        <!-- Add additional videos similarly -->
+        <div class="column is-half">
+          <div class="video-container square-video">
+            <video controls autoplay muted>
+              <source src="./static/videos/Loong/LinGen.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen (Ours)*</p>
+        </div>
+        <p class="video-title" style="margin-top: -0.7rem;">*LinGen supports multiple aspect ratios, here we follow the baseline's setup to generate squared videos. </p>
+      </div>
+      <h2 class="title is-5 has-text-centered">PA-VDM does not provide their prompts, so we find a similar video that is generated by LinGen</h2>
+      <div class="columns is-multiline is-centered">
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/PA-VDM/PA-VDM.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">PA-VDM</p>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/PA-VDM/LinGen.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen (Ours)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Ablation Experiments</h2>
+    <!-- Block 1: First 2x3 Videos -->
+    <div class="block">
+      <h2 class="title is-5 has-text-centered">After 30K Pre-Training Steps at the 256p Resolution and the 17-Second Length</h2>
+      <div class="columns is-multiline is-centered">
+        <!-- Video 1 -->
+        <div class="column is-one-third">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/rms_tesa/no_tesa_rms.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen w/o TESA and RMS</p>
+        </div>
+        <!-- Video 2 -->
+        <div class="column is-one-third">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/rms_tesa/no_rms.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen w/o RMS</p>
+        </div>
+        <!-- Video 3 -->
+        <div class="column is-one-third">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/rms_tesa/default.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Block 2: Second 2x3 Videos -->
+    <div class="block">
+      <h2 class="title is-5 has-text-centered">After 2K Pre-Training Steps at the 512p Resolution and the 68-Second Length</h2>
+      <div class="columns is-multiline is-centered">
+        <!-- Repeat videos for the second block -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/review_tokens/no_rtoken.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen w/o review tokens</p>
+        </div>
+        <!-- Add additional videos similarly -->
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/review_tokens/with_rtoken.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen w/ review tokens</p>
+        </div>
+      </div>
+      <h2 class="title is-5 has-text-centered">Showing a Failure Case in which Consistency is Abnormally Bad at 256p Resolution</h2>
+      <div class="columns is-multiline is-centered">
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/hybrid_training/no_hybrid.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen w/o Hybrid Training</p>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/hybrid_training/with_hybrid.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen w/ Hybrid Training</p>
+        </div>
+      </div>
+      <h2 class="title is-5 has-text-centered">Showing a Failure Case in which Quality is Abnormally Bad at 512p Resolution</h2>
+      <div class="columns is-multiline is-centered">
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/quality-tuning/no_quality.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen w/o Quality-Tuning</p>
+        </div>
+        <div class="column is-half">
+          <div class="video-container">
+            <video controls autoplay muted>
+              <source src="./static/videos/quality-tuning/with_quality.mp4" type="video/mp4">
+            </video>
+          </div>
+          <p class="video-title">LinGen w/ Quality-Tuning</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{wang2024lingen,
+  author    = {Wang, Hongjie and Ma, Chih-Yao and Liu, Yen-Cheng and Hou, Ji and Xu, Tao and Wang, Jialiang and Juefei-Xu, Felix and Luo, Yaqiao and Zhang, Peizhao and Hou, Tingbo and Vajda, Peter and Jha, Niraj K. and Dai, Xiaoliang},
+  title     = {LinGen: Towards High-Resolution Minute-Length Text-to-Video Generation with Linear Computational Complexity},
+  journal   = {arXiv preprint},
+  year      = {2024},
+}</code></pre>
+  </div>
+</section>
+
+</body>
+</html>
